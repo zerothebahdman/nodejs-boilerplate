@@ -17,6 +17,7 @@ if (config.get<string>('env') === 'development') {
   app.use(morgan('dev'));
 }
 
+app.use(express.json());
 app.use(cors());
 app.disable('x-powered-by');
 
