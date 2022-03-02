@@ -6,6 +6,7 @@ import { join } from 'path';
 import log from '../../../../logging/logger';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import TokenService from '../../../../services/Token.service';
 const { user } = new PrismaClient();
 
 export type RequestType = {
@@ -34,30 +35,7 @@ export const isAuthenticated = async (
     if (!id || !token) return _noAuth();
     if (id.trim().toLowerCase() !== 'bearer') return _noAuth();
 
-    /** Get the token from the file system*/
-    let PUBLIC_KEY = '';
-    (async () => {
-      try {
-        PUBLIC_KEY = await readFile(
-          join(__dirname, '../../../../certs/public_key.pem.pem'),
-          'utf8'
-        );
-      } catch (err: any) {
-        log.error(err.message);
-      }
-    })();
-
-    /** Verify that the token is valid */
-    let decodedToken: string | jwt.JwtPayload = '';
-    try {
-      decodedToken = jwt.verify(token, PUBLIC_KEY, { algorithms: ['RS512'] });
-    } catch (err: any) {
-      log.error(err.message);
-      if (err.name === 'TokenExpiredError')
-        return next(
-          new AppException('Whoops!, your token has expired.', Status.FORBIDDEN)
-        );
-    }
+    const decodedToken = TokenService.verifyToken(token, next);
 
     /** Check if user that has the token still exists */
     const { uuid }: any = decodedToken;
