@@ -7,4 +7,5 @@ export default {
   [ENV]: true,
   env: ENV,
   port: process.env.PORT,
+  tokenExpiration: '30min',
 };
