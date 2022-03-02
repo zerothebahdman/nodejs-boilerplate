@@ -4,7 +4,7 @@ import { join } from 'path';
 import log from '../../../../logging/logger';
 import config from 'config';
 
-let PRIVATE_KEY: string;
+let PRIVATE_KEY: string = '';
 (async () => {
   try {
     PRIVATE_KEY = readFileSync(
@@ -17,8 +17,8 @@ let PRIVATE_KEY: string;
 })();
 
 export default class TokenService {
-  static async _generateJwtToken(id: string): Promise<string> {
-    const token = jwt.sign({ id }, PRIVATE_KEY, {
+  static async _generateJwtToken(uuid: string): Promise<string> {
+    const token = jwt.sign({ uuid }, PRIVATE_KEY, {
       algorithm: 'RS512',
       expiresIn: config.get<string>('tokenExpiration'),
     });
