@@ -4,6 +4,7 @@ import AppException from '../../../../exceptions/AppException';
 import log from '../../../../logging/logger';
 import UserValidationSchema from '../../../../validators/UserValidator';
 import EncryptionService from './Encryption.service';
+import TokenService from './Token.service';
 const { user } = new PrismaClient();
 
 interface User {
@@ -53,9 +54,19 @@ export default class UserService {
           phone_number: _validateResource.phone_number,
           password: _hashedPassword,
         },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          address: true,
+          phone_number: true,
+          gender: true,
+        },
       });
 
-      return result;
+      const token = await TokenService._generateJwtToken(result.id);
+
+      return { result, token };
     } catch (err: any) {
       if (err.isJoi === true) return next(new AppException(err.message, 422));
       return next(new AppException(err.message, err.status));
