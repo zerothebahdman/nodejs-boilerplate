@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { NextFunction } from 'express';
-import AppException from '../../../../exceptions/AppException';
-import log from '../../../../logging/logger';
-import UserValidationSchema from '../../../../validators/UserValidator';
+import AppException from '../exceptions/AppException';
+import log from '../logging/logger';
+import UserValidationSchema from '../validators/UserValidator';
 import EncryptionService from './Encryption.service';
 import TokenService from './Token.service';
 const { user } = new PrismaClient();

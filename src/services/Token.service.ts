@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import log from '../../../../logging/logger';
+import log from '../logging/logger';
 import config from 'config';
 
 let PRIVATE_KEY: string = '';
