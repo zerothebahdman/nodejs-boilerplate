@@ -100,7 +100,7 @@ export default class UserService {
 
       res.status(httpStatus.ACCEPTED).json({
         status: 'success',
-        message: 'You have successfully logged in',
+        message: `You have successfully logged in ${_userExists.name}`,
         token,
       });
     } catch (err: any) {

@@ -35,7 +35,8 @@ export const isAuthenticated = async (
     if (!id || !token) return _noAuth();
     if (id.trim().toLowerCase() !== 'bearer') return _noAuth();
 
-    const decodedToken = TokenService.verifyToken(token, next);
+    /** Decode the token in the TokenService */
+    const decodedToken = await TokenService.verifyToken(token, next);
 
     /** Check if user that has the token still exists */
     const { uuid }: any = decodedToken;
@@ -45,8 +46,8 @@ export const isAuthenticated = async (
         new AppException('Opps!, user does not exist', Status.NOT_FOUND)
       );
 
+    /** Store the result in a req object */
     req.user = result;
-    log.info(req.user);
     next();
   } catch (err: any) {
     return next(new AppException(err.message, err.status));
