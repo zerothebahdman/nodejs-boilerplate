@@ -1,10 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { NextFunction } from 'express';
+import { NextFunction, Response } from 'express';
 import AppException from '../exceptions/AppException';
 import log from '../logging/logger';
-import UserValidationSchema from '../validators/UserValidator';
+import SignUpUserValidationSchema from '../validators/SignUpUserValidator';
 import EncryptionService from './Encryption.service';
 import TokenService from './Token.service';
+import LoginUserValidationSchema from '../validators/LoginUserValidator';
+import httpStatus from 'http-status';
 const { user } = new PrismaClient();
 
 interface User {
@@ -41,7 +43,7 @@ export default class UserService {
   static async createUser(request: Request, next: NextFunction) {
     try {
       const _validateResource: Request =
-        await UserValidationSchema.validateAsync(request);
+        await SignUpUserValidationSchema.validateAsync(request);
 
       const _hashedPassword = await EncryptionService.hashPassword(
         _validateResource.password
@@ -69,6 +71,53 @@ export default class UserService {
       return { result, token };
     } catch (err: any) {
       if (err.isJoi === true) return next(new AppException(err.message, 422));
+      return next(new AppException(err.message, err.status));
+    }
+  }
+
+  static async loginUser(request: Request, res: Response, next: NextFunction) {
+    try {
+      const _validateResource: Request =
+        await LoginUserValidationSchema.validateAsync(request, {
+          abortEarly: false,
+        });
+      const _userExists = await user.findUnique({
+        where: { email: _validateResource.email },
+      });
+
+      if (
+        !_userExists ||
+        !(await EncryptionService.comparePassword(
+          _userExists.password,
+          _validateResource.password
+        ))
+      )
+        return next(
+          new AppException(`Opps!, Incorrect email or password`, 401)
+        );
+
+      const token = await TokenService._generateJwtToken(_userExists.id);
+
+      res.status(httpStatus.ACCEPTED).json({
+        status: 'success',
+        message: 'You have successfully logged in',
+        token,
+      });
+    } catch (err: any) {
+      log.error(err.messaage);
+      if (err.isJoi === true) {
+        let errorMessage: string = '';
+        for (const error of err.details) {
+          errorMessage +=
+            '[ ' +
+            error.path.join(' > ') +
+            error.message.slice(error.message.lastIndexOf('"') + 1) +
+            ' ]';
+        }
+        return next(
+          new AppException(errorMessage, httpStatus.UNPROCESSABLE_ENTITY)
+        );
+      }
       return next(new AppException(err.message, err.status));
     }
   }
