@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import UserService from '../services/User.service';
+import UserService from '../../../../services/User.service';
 import AppException from '../../../../exceptions/AppException';
 
 import { PrismaClient } from '@prisma/client';
