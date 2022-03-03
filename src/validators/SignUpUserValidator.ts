@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-const UserValidationSchema = Joi.object().keys({
+const SignUpUserValidationSchema = Joi.object().keys({
   name: Joi.string().alphanum().min(3).lowercase().max(20).required(),
   email: Joi.string()
     .email({
@@ -25,4 +25,4 @@ const UserValidationSchema = Joi.object().keys({
   address: Joi.string().optional().lowercase(),
 });
 
-export default UserValidationSchema;
+export default SignUpUserValidationSchema;
