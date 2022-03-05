@@ -1,9 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import UserService from '../services/User.service';
+import UserService, { User } from '../services/User.service';
 import AppException from '../exceptions/AppException';
 
 import { PrismaClient } from '@prisma/client';
+import log from '../logging/logger';
+import EmailService from '../services/Email.service';
+import TokenService from '../services/Token.service';
+
 const { user } = new PrismaClient();
+const emailService = new EmailService();
 
 export default class CreateUser {
   async createUser(req: Request, res: Response, next: NextFunction) {
@@ -17,18 +22,26 @@ export default class CreateUser {
           new AppException(`Opps!, ${_userExists.email} is taken`, 422)
         );
 
-      const { result, token }: any = await UserService.createUser(
-        req.body,
-        next
+      /** if user does not exist create the user using the user service */
+      const { _user, jwtToken, emailVerificationToken }: any =
+        await UserService.createUser(req.body, next);
+
+      /** Send email verfication to user */
+      await emailService._sendUserEmailVerificationEmail(
+        _user.name,
+        _user.email,
+        emailVerificationToken,
+        req
       );
 
       res.status(200).json({
         status: 'success',
-        message: 'User created successfully',
-        token: token,
-        user: result,
+        message: `We've sent an verification email to your mail`,
+        jwtToken: jwtToken,
+        user: _user,
       });
     } catch (err: any) {
+      log.error(err);
       return next(new AppException(err.message, err.status));
     }
   }

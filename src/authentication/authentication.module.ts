@@ -4,6 +4,10 @@
 
 import CreateUser from './CreateUser';
 import LoginUser from './LoginUser';
+import VerifyUserEmail from './VerifyUserEmail';
 
-export const createUser = new CreateUser();
-export const loginUser = new LoginUser();
+const createUser = new CreateUser();
+const loginUser = new LoginUser();
+const verifyUserEmail = new VerifyUserEmail();
+
+export { createUser, loginUser, verifyUserEmail };
