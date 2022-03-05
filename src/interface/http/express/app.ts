@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cors());
 app.disable('x-powered-by');
 
-app.use('/api/v1/users', userRouter);
+app.use('/api/v1/user', userRouter);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   return next(
