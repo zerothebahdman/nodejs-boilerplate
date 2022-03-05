@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import UserService from '../services/User.service';
+import UserService, { User } from '../services/User.service';
 import AppException from '../exceptions/AppException';
 
 import { PrismaClient } from '@prisma/client';
 const { user } = new PrismaClient();
+
+type T = { token: string; result: User };
 
 export default class CreateUser {
   async createUser(req: Request, res: Response, next: NextFunction) {

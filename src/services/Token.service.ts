@@ -7,6 +7,7 @@ import { readFile } from 'fs/promises';
 import AppException from '../exceptions/AppException';
 import { NextFunction } from 'express';
 import httpStatus from 'http-status';
+import { createHash, randomBytes } from 'node:crypto';
 
 let PRIVATE_KEY: string = '';
 (async () => {
@@ -58,5 +59,17 @@ export default class TokenService {
 
       return next(new AppException(err.message, err.status));
     }
+  }
+
+  /**
+   |
+   * @param searchValue — A string to search for.
+   * @param replaceValue — A string containing the text to replace for every successful match of searchValue in this string.
+   */
+  static async generateTokenUsedForEmailVerification() {
+    const token = randomBytes(7).toString('base64').replace('/', 'a');
+    const hashedToken = createHash('sha512').update(token).digest('base64');
+
+    return { token, hashedToken };
   }
 }
