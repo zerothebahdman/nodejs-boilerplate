@@ -13,20 +13,21 @@ datasource db {
 model User {
   // id                Int       @id @default(autoincrement())
   // id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  id                       String                   @id @unique @default(uuid())
-  name                     String                   @db.VarChar(255)
-  email                    String                   @unique @db.VarChar(255)
-  password                 String                   @db.VarChar(255)
-  phone_number             String                   @db.VarChar(255)
-  gender                   Gender?                  @default(male)
-  address                  String?                  @db.VarChar(255)
-  isEmailVerified          Boolean?                 @default(false)
-  email_verified_at        DateTime?
-  passwordLastReset        DateTime?
-  created_at               DateTime                 @default(now())
-  updated_at               DateTime?                @updatedAt
-  deleted_at               DateTime?
-  email_verification_token EmailVerificationToken[]
+  id                String    @id @unique @default(uuid())
+  name              String    @db.VarChar(255)
+  email             String    @unique @db.VarChar(255)
+  password          String    @db.VarChar(255)
+  phone_number      String    @db.VarChar(255)
+  gender            Gender?   @default(male)
+  address           String?   @db.VarChar(255)
+  isEmailVerified   Boolean?  @default(false)
+  email_verified_at DateTime?
+  token             String?   @unique @db.VarChar(255)
+  token_expires_at  DateTime?
+  passwordLastReset DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime? @updatedAt
+  deleted_at        DateTime?
 
   @@map("user")
 }
@@ -34,17 +35,4 @@ model User {
 enum Gender {
   male
   female
-}
-
-model EmailVerificationToken {
-  id               String    @id @unique @default(uuid())
-  user_id          String?
-  user             User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "userss_ibfk_1")
-  token            String    @unique @db.VarChar(255)
-  token_expires_at BigInt?
-  created_at       DateTime  @default(now())
-  updated_at       DateTime? @updatedAt
-
-  @@index([user_id], map: "user_id")
-  @@map("emailVerficationToken")
 }
