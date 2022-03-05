@@ -34,6 +34,10 @@ let PUBLIC_KEY = '';
 })();
 
 export default class TokenService {
+  /**
+   * @param uuid
+   * @returns
+   */
   static async _generateJwtToken(uuid: string): Promise<string> {
     const token = jwt.sign({ uuid }, PRIVATE_KEY, {
       algorithm: 'RS512',
@@ -43,6 +47,11 @@ export default class TokenService {
     return token;
   }
 
+  /**
+   * @param token refers to the token that you want to verify
+   * @param next inbuilt middleware function
+   * @returns
+   */
   static async verifyToken(token: string, next: NextFunction) {
     try {
       const _token = jwt.verify(token, PUBLIC_KEY, { algorithms: ['RS512'] });

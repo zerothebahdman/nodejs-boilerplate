@@ -35,5 +35,8 @@ export default app;
 //   public app: Application;
 //   public port: number;
 
-//   constructor() {}
+//   constructor() {
+//     this.app = express();
+//     this.port = config.get<number>('port');
+//   };
 // }
