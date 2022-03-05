@@ -9,13 +9,12 @@ import LoginUserValidationSchema from '../validators/LoginUserValidator';
 import httpStatus from 'http-status';
 const { user } = new PrismaClient();
 
-export interface User {
+interface User {
   id: string;
   name: string;
   email: string;
   address: string | null;
   phone_number: string;
-  token?: string;
 }
 interface Request {
   name: string;
@@ -43,16 +42,14 @@ export default class UserService {
 
   static async createUser(request: Request, next: NextFunction) {
     try {
-      /** Use JOI to validate input comming from the request.body property */
       const _validateResource: Request =
         await SignUpUserValidationSchema.validateAsync(request);
 
-      /** Use the encryption service to hash a password*/
       const _hashedPassword = await EncryptionService.hashPassword(
         _validateResource.password
       );
 
-      const result: User = await user.create({
+      const result = await user.create({
         data: {
           name: _validateResource.name,
           email: _validateResource.email,
@@ -69,11 +66,9 @@ export default class UserService {
         },
       });
 
-      /** Use the token service to generate a jwt token */
-      const token: string = await TokenService._generateJwtToken(result.id);
+      const token = await TokenService._generateJwtToken(result.id);
 
-      // return { result, token };
-      return [result, token ];
+      return { result, token };
     } catch (err: any) {
       if (err.isJoi === true) return next(new AppException(err.message, 422));
       return next(new AppException(err.message, err.status));
