@@ -7,16 +7,21 @@ import EncryptionService from './Encryption.service';
 import TokenService from './Token.service';
 import LoginUserValidationSchema from '../validators/LoginUserValidator';
 import httpStatus from 'http-status';
-const { user } = new PrismaClient();
+import EmailService from '../services/Email.service';
 
-interface User {
+const { user } = new PrismaClient();
+const emailService = new EmailService();
+
+export interface User {
   id: string;
   name: string;
   email: string;
-  address: string | null;
-  phone_number: string;
+  address?: string | null;
+  phone_number?: string;
+  token?: string;
+  isEmailVerified?: boolean;
 }
-interface Request {
+interface UserRequest {
   name: string;
   email: string;
   phone_number: string;
@@ -40,21 +45,27 @@ export default class UserService {
     return data;
   }
 
-  static async createUser(request: Request, next: NextFunction) {
+  static async createUser(request: UserRequest, next: NextFunction) {
     try {
-      const _validateResource: Request =
+      /** Use JOI to validate input comming from the request.body property */
+      const _validateResource: UserRequest =
         await SignUpUserValidationSchema.validateAsync(request);
 
+      /** Use the encryption service to hash a password*/
       const _hashedPassword = await EncryptionService.hashPassword(
         _validateResource.password
       );
+      const { emailVerificationToken, hashedEmailVerificationToken } =
+        await TokenService.generateTokenUsedForEmailVerification();
 
-      const result = await user.create({
+      const _user: User = await user.create({
         data: {
           name: _validateResource.name,
           email: _validateResource.email,
           phone_number: _validateResource.phone_number,
           password: _hashedPassword,
+          token: hashedEmailVerificationToken,
+          token_expires_at: new Date(Date.now() + 30 * 60 * 1000), //token expires after 30mins
         },
         select: {
           id: true,
@@ -66,18 +77,23 @@ export default class UserService {
         },
       });
 
-      const token = await TokenService._generateJwtToken(result.id);
+      /** Use the token service to generate a jwt token */
+      const token: string = await TokenService._generateJwtToken(_user.id);
 
-      return { result, token };
+      return { _user, token, emailVerificationToken };
     } catch (err: any) {
       if (err.isJoi === true) return next(new AppException(err.message, 422));
       return next(new AppException(err.message, err.status));
     }
   }
 
-  static async loginUser(request: Request, res: Response, next: NextFunction) {
+  static async loginUser(
+    request: UserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
-      const _validateResource: Request =
+      const _validateResource: UserRequest =
         await LoginUserValidationSchema.validateAsync(request, {
           abortEarly: false,
         });
