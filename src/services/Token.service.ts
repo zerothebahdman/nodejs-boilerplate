@@ -71,9 +71,7 @@ export default class TokenService {
   }
 
   /**Generate token that will be sent to the users email for verification
-   * Generate random
-   * @param searchValue — A string to search for.
-   * @param replaceValue — A string containing the text to replace for every successful match of searchValue in this string.
+   * Generate random string using randomBytes from node crypto library
    */
   static async generateTokenUsedForEmailVerification() {
     /** use the randomBytes func from node crypto module to generate a random string of token*/

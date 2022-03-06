@@ -30,7 +30,7 @@ export default class NodemailerModule {
   async send(mailData: MailData) {
     return this.transporter.sendMail(mailData, (err, data) => {
       if (err) log.error(err);
-      else log.info(`Email sent successfully $${data}`);
+      else log.info(`Email sent successfully ${data}`);
     });
   }
 }
