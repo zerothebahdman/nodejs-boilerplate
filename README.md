@@ -16,7 +16,7 @@ Start a new application in seconds!
 
 1. Node 16
 2. NPM
-3. Docker and Docker Compose
+3. Docker
 4. MySQL || PostgreSQL
 
 ## Project Installation
