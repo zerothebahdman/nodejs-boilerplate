@@ -11,6 +11,7 @@ Start a new application in seconds!
 - Quick scaffolding
 - TypeScript
   - The best way to write modern applications. Code is easier to understand. It is now way more difficult to write invalid code as was the case in dynamically typed languages
+- Authentication out of the box
 
 ## Requirements
 
