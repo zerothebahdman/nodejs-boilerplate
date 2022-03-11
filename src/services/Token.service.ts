@@ -12,16 +12,16 @@ import { createHash, randomBytes } from 'node:crypto';
 let PRIVATE_KEY: string = '';
 (async () => {
   try {
-    PRIVATE_KEY = readFileSync(
+    PRIVATE_KEY = await readFile(
       join(__dirname, '../certs/private_key.pem'),
-      'utf-8'
+      'utf8'
     );
   } catch (err: any) {
     log.error(err.message);
   }
 })();
 
-let PUBLIC_KEY = '';
+let PUBLIC_KEY: string = '';
 (async () => {
   try {
     PUBLIC_KEY = await readFile(
