@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "nodemon server.ts"
+    "dev": "nodemon server.ts",
+    "build": "tsc",
+    "start": "nodemon build/server.js"
   },
   "keywords": [],
   "author": "",
