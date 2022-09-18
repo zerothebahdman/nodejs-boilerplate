@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "nodemon server.ts",
-    "build": "tsc",
-    "start": "nodemon build/server.js"
+    "build": "tsc && cd ./build/src/ && mkdir certs && cd certs/ && openssl genrsa -out private_key.pem 4096 && openssl rsa -pubout -in private_key.pem -out public_key.pem",
+    "start": "node build/server.js"
   },
   "keywords": [],
   "author": "",
