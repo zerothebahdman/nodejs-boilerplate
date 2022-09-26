@@ -4,7 +4,7 @@ A highly scalable and a focus on performance and best practices boilerplate code
 
 Start a new application in seconds!
 
-  ---
+---
 
 ## Features
 
@@ -34,9 +34,9 @@ Start a new application in seconds!
 - If you are using **MySQL**
   - Navigate into `src/database/prisma/schema.prisma` verify that inside the datasource db object provider is set to mysql i.e `provider = "mysql"`
 
- ```bash
- Your database url in the `.env` file should as follows
- 
+```bash
+Your database url in the `.env` file should as follows
+
 DATABASE_URL="mysql://johndoe:randompassword@localhost:3306/mydb?schema=public"
 
 mydb : The name of the databse you created on your machine
@@ -47,7 +47,7 @@ randompassword : The password of the database
 - If you are using **PostgreSQL**
   - Navigate into `src/database/prisma/schema.prisma` verify that inside the datasource db object provider is set to mysql i.e `provider = "postgresql"`
 
- ```bash
+````bash
 Your database url in the `.env` file should as follows
 
 DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
@@ -60,7 +60,7 @@ randompassword : The password of the database
 - To migrate the database tables from prisma use `npx prisma migrate dev --name init --schema=./src/database/prisma/schema.prisma`
 - To view your database on your browser use prisma studio `npx prisma studio --schema=./src/database/prisma/schema.prisma`
 
-  ---
+ ---
 
 **Note**
 If you have discovered a bug or have a feature suggestion, feel free to create an issue on [Github](https://github.com/codewithdiv/nodejs-boilerplate/issues).
@@ -76,3 +76,4 @@ Dont forget to star or fork this if you like it
 [![license](https://img.shields.io/badge/license-GPL-4dc71f.svg)](https://github.com/codewithdiv/nodejs-boilerplate/blob/main/LICENCE)
 
 This project is licensed under the terms of the [GPL license](/LICENSE).
+````
